@@ -1,9 +1,40 @@
 <?php
 
+/** Durumlar (States)
+Yeni Sipariş Alındı (NewOrderState)
+Sipariş İşleniyor/Hazırlanıyor (ProcessingState)
+Sipariş Yolda/Gönderimde (OnTheWayState)
+Sipariş Teslim Edildi (DeliveredState)
+*/
+
 interface IOrderState {
     public function next($order);
     public function previous($order);
     public function getCurrentStatus();
+}
+
+class Order {
+    private $state;
+
+    public function __construct() {
+        $this->state = new NewOrderState();
+    }
+
+    public function setState($state) {
+        $this->state = $state;
+    }
+
+    public function nextState() {
+        $this->state->next($this);
+    }
+
+    public function previousState() {
+        $this->state->previous($this);
+    }
+
+    public function getOrderState() {
+        $this->state->getCurrentStatus();
+    }
 }
 
 class DeliveredState implements IOrderState {
@@ -59,30 +90,6 @@ class NewOrderState implements IOrderState {
 
     public function getCurrentStatus() {
         echo "Sipariş Verildi 📝\n";
-    }
-}
-
-class Order {
-    private $state;
-
-    public function __construct() {
-        $this->state = new NewOrderState();
-    }
-
-    public function setState($state) {
-        $this->state = $state;
-    }
-
-    public function nextState() {
-        $this->state->next($this);
-    }
-
-    public function previousState() {
-        $this->state->previous($this);
-    }
-
-    public function getOrderState() {
-        $this->state->getCurrentStatus();
     }
 }
 
